@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"strings"
 
-	"shape2osm/utils/osm"
-	"shape2osm/utils/shp"
+	"github.com/mytaxi-uz/shape2osm/utils/osm"
+	"github.com/mytaxi-uz/shape2osm/utils/shp"
 )
 
 func convertPointToOSMNode(shapeReader *shp.Reader) {

@@ -3,7 +3,7 @@ package osm
 import (
 	"encoding/xml"
 
-	"shape2osm/utils/osm/internal/osmpb"
+	"github.com/mytaxi-uz/shape2osm/utils/osm/internal/osmpb"
 )
 
 const locMultiple = 10000000.0

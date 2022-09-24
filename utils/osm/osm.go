@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"strconv"
 
-	"shape2osm/utils/osm/internal/osmpb"
+	"github.com/mytaxi-uz/shape2osm/utils/osm/internal/osmpb"
 
 	"github.com/gogo/protobuf/proto"
 )
