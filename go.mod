@@ -1,4 +1,4 @@
-module shape2osm
+module github.com/mytaxi-uz/shape2osm
 
 go 1.18
 
