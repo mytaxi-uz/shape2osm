@@ -4,11 +4,14 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/mytaxi-uz/shape2osm/utils/osm"
-	"github.com/mytaxi-uz/shape2osm/utils/shp"
+	"github.com/mytaxi-uz/shape2osm/util"
+	"github.com/mytaxi-uz/shape2osm/util/osm"
+	"github.com/mytaxi-uz/shape2osm/util/shp"
 )
 
-func convertPolylineToOSMWay(shapeReader *shp.Reader) {
+// road, river
+
+func convertPolylineToOSMWay(shapeReader *shp.Reader, shapeType string) {
 	// fields from the attribute table (DBF)
 	fields := shapeReader.Fields()
 
@@ -25,8 +28,8 @@ func convertPolylineToOSMWay(shapeReader *shp.Reader) {
 		var wayNodes osm.WayNodes
 
 		for _, point := range polyline.Points {
-			lat := truncateFloat64(point.Y)
-			lon := truncateFloat64(point.X)
+			lat := util.TruncateFloat64(point.Y)
+			lon := util.TruncateFloat64(point.X)
 			nodeID, ok := nodesIDMap[[2]float64{lat, lon}]
 			if !ok {
 				osmID++
@@ -58,7 +61,16 @@ func convertPolylineToOSMWay(shapeReader *shp.Reader) {
 
 		osmID++
 
-		tags := convertPolylineAttrToOSMTag(num, fields, shapeReader)
+		var tags osm.Tags
+
+		switch shapeType {
+		case "road":
+			tags = convertRoadAttrToOSMTag(num, fields, shapeReader)
+		case "river":
+			tags = convertWaterwayAttrToOSMTag(num, fields, shapeReader)
+		case "railway":
+			tags = convertRailwayAttrToOSMTag(num, fields, shapeReader)
+		}
 
 		way := osm.Way{
 			ID:        osmID,
@@ -71,7 +83,7 @@ func convertPolylineToOSMWay(shapeReader *shp.Reader) {
 	}
 }
 
-func convertPolylineAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.Tags) {
+func convertRoadAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.Tags) {
 	var key, value string
 	typCod := false
 	for _, f := range fields {
@@ -88,6 +100,7 @@ func convertPolylineAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader
 			Value: "road",
 		}
 		tags = append(tags, tag)
+		return
 	}
 
 	for k, f := range fields {
@@ -104,16 +117,10 @@ func convertPolylineAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader
 		/*
 			case "ID":
 				key = "id"
-				for i, c := range attr {
-					if c == '.' {
-						attr = attr[:i]
-						break
-					}
-				}
 				value = attr
 		*/
 		case "NAME_UZ":
-			key = "name"
+			key = "name:uz"
 			value = attr
 		case "NAME", "NAME_RU":
 			key = "name:ru"
@@ -182,6 +189,112 @@ func convertPolylineAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader
 						value = "living_street"
 					}
 			*/
+		}
+
+		if key != "" {
+			tag := osm.Tag{
+				Key:   key,
+				Value: value,
+			}
+			tags = append(tags, tag)
+		}
+	}
+
+	return
+}
+
+func convertWaterwayAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.Tags) {
+	var key, value string
+
+	for k, f := range fields {
+		attr := reader.ReadAttribute(num, k)
+
+		if attr == "" {
+			continue
+		}
+
+		key = ""
+		field := strings.ToUpper(f.String())
+
+		switch field {
+		/*
+			case "ID":
+				key = "id"
+				value = attr
+		*/
+		case "NAME_UZ":
+			key = "name:uz"
+			value = attr
+		case "NAME", "NAME_RU":
+			key = "name:ru"
+			value = attr
+		case "NAME_EN":
+			key = "name:en"
+			value = attr
+		case "TYP_COD":
+			key = "waterway"
+			switch attr {
+			case "65":
+				value = "canal"
+			case "75":
+				value = "stream"
+			case "74":
+				value = "river"
+			default:
+				key = ""
+			}
+		}
+
+		if key != "" {
+			tag := osm.Tag{
+				Key:   key,
+				Value: value,
+			}
+			tags = append(tags, tag)
+		}
+	}
+
+	return
+}
+
+func convertRailwayAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.Tags) {
+	var key, value string
+
+	for k, f := range fields {
+		attr := reader.ReadAttribute(num, k)
+
+		if attr == "" {
+			continue
+		}
+
+		key = ""
+		field := strings.ToUpper(f.String())
+
+		switch field {
+		/*
+			case "ID":
+				key = "id"
+				value = attr
+		*/
+		case "NAME_UZ":
+			key = "name:uz"
+			value = attr
+		case "NAME", "NAME_RU":
+			key = "name:ru"
+			value = attr
+		case "NAME_EN":
+			key = "name:en"
+			value = attr
+		case "TYP_COD":
+			key = "railway"
+			switch attr {
+			case "385":
+				value = "subway"
+			case "395":
+				value = "rail"
+			default:
+				key = ""
+			}
 		}
 
 		if key != "" {

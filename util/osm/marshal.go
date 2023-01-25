@@ -3,7 +3,7 @@ package osm
 import (
 	"encoding/xml"
 
-	"github.com/mytaxi-uz/shape2osm/utils/osm/internal/osmpb"
+	"github.com/mytaxi-uz/shape2osm/util/osm/internal/osmpb"
 )
 
 const locMultiple = 10000000.0
@@ -221,49 +221,49 @@ func encodeWayNodeIDs(waynodes WayNodes) []int64 {
 }
 
 /*
-func encodeDenseMembers(members Members) *osmpb.DenseMembers {
-	l := len(members)
-	versions := make([]int32, l)
-	changesetIDs := make([]int64, l)
-	orientations := make([]int32, l)
-	lats := make([]int64, l)
-	lons := make([]int64, l)
+	func encodeDenseMembers(members Members) *osmpb.DenseMembers {
+		l := len(members)
+		versions := make([]int32, l)
+		changesetIDs := make([]int64, l)
+		orientations := make([]int32, l)
+		lats := make([]int64, l)
+		lons := make([]int64, l)
 
-	locCount := 0
-	orientCount := 0
-	for i, m := range members {
-		if m.Lat != 0 || m.Lon != 0 {
-			locCount++
+		locCount := 0
+		orientCount := 0
+		for i, m := range members {
+			if m.Lat != 0 || m.Lon != 0 {
+				locCount++
+			}
+
+			lats[i] = geoToInt64(m.Lat)
+			lons[i] = geoToInt64(m.Lon)
+
+			versions[i] = int32(m.Version)
+			// changesetIDs[i] = int64(m.ChangesetID)
+
+			if m.Orientation != 0 {
+				orientations[i] = int32(m.Orientation)
+				orientCount++
+			}
 		}
 
-		lats[i] = geoToInt64(m.Lat)
-		lons[i] = geoToInt64(m.Lon)
-
-		versions[i] = int32(m.Version)
-		// changesetIDs[i] = int64(m.ChangesetID)
-
-		if m.Orientation != 0 {
-			orientations[i] = int32(m.Orientation)
-			orientCount++
+		result := &osmpb.DenseMembers{
+			Versions:     versions,
+			ChangesetIds: encodeInt64(changesetIDs),
 		}
-	}
 
-	result := &osmpb.DenseMembers{
-		Versions:     versions,
-		ChangesetIds: encodeInt64(changesetIDs),
-	}
+		if locCount > 0 {
+			result.Lats = encodeInt64(lats)
+			result.Lons = encodeInt64(lons)
+		}
 
-	if locCount > 0 {
-		result.Lats = encodeInt64(lats)
-		result.Lons = encodeInt64(lons)
-	}
+		if orientCount > 0 {
+			result.Orientation = orientations
+		}
 
-	if orientCount > 0 {
-		result.Orientation = orientations
+		return result
 	}
-
-	return result
-}
 */
 func encodeInt64(vals []int64) []int64 {
 	var prev int64

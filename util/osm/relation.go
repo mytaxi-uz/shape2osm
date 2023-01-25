@@ -33,9 +33,9 @@ type Relation struct {
 	// User        string             `xml:"user,attr" json:"user,omitempty"`
 	// UserID      UserID             `xml:"uid,attr" json:"uid,omitempty"`
 	// Visible     bool               `xml:"visible,attr" json:"visible"`
-	// Version     int                `xml:"version,attr" json:"version,omitempty"`
+	Version int `xml:"version,attr" json:"version,omitempty"`
 	// ChangesetID ChangesetID        `xml:"changeset,attr" json:"changeset,omitempty"`
-	// Timestamp   time.Time          `xml:"timestamp,attr" json:"timestamp,omitempty"`
+	Timestamp string `xml:"timestamp,attr" json:"timestamp,omitempty"`
 
 	Tags    Tags    `xml:"tag" json:"tags,omitempty"`
 	Members Members `xml:"member" json:"members"`

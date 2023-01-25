@@ -22,57 +22,57 @@ const (
 
 /*
 // objectID returns an object id from the given type.
-func (t Type) objectID(ref int64, v int) (ObjectID, error) {
-	switch t {
-	case TypeNode:
-		return NodeID(ref).ObjectID(v), nil
-	case TypeWay:
-		return WayID(ref).ObjectID(v), nil
-	case TypeRelation:
-		return RelationID(ref).ObjectID(v), nil
-	// case TypeChangeset:
-	// return ChangesetID(ref).ObjectID(), nil
-	// case TypeNote:
-	// return NoteID(ref).ObjectID(), nil
-	// case TypeUser:
-	// return UserID(ref).ObjectID(), nil
-	case TypeBounds:
-		var b *Bounds
-		return b.ObjectID(), nil
-	}
 
-	return 0, fmt.Errorf("unknown type: %v", t)
-}
+	func (t Type) objectID(ref int64, v int) (ObjectID, error) {
+		switch t {
+		case TypeNode:
+			return NodeID(ref).ObjectID(v), nil
+		case TypeWay:
+			return WayID(ref).ObjectID(v), nil
+		case TypeRelation:
+			return RelationID(ref).ObjectID(v), nil
+		// case TypeChangeset:
+		// return ChangesetID(ref).ObjectID(), nil
+		// case TypeNote:
+		// return NoteID(ref).ObjectID(), nil
+		// case TypeUser:
+		// return UserID(ref).ObjectID(), nil
+		case TypeBounds:
+			var b *Bounds
+			return b.ObjectID(), nil
+		}
+
+		return 0, fmt.Errorf("unknown type: %v", t)
+	}
 
 // FeatureID returns a feature id from the given type.
-func (t Type) FeatureID(ref int64) (FeatureID, error) {
-	switch t {
-	case TypeNode:
-		return NodeID(ref).FeatureID(), nil
-	case TypeWay:
-		return WayID(ref).FeatureID(), nil
-	case TypeRelation:
-		return RelationID(ref).FeatureID(), nil
-	}
 
-	return 0, fmt.Errorf("unknown type: %v", t)
-}
+	func (t Type) FeatureID(ref int64) (FeatureID, error) {
+		switch t {
+		case TypeNode:
+			return NodeID(ref).FeatureID(), nil
+		case TypeWay:
+			return WayID(ref).FeatureID(), nil
+		case TypeRelation:
+			return RelationID(ref).FeatureID(), nil
+		}
+
+		return 0, fmt.Errorf("unknown type: %v", t)
+	}
 */
 const (
 	versionBits = 16
-	versionMask = 0x000000000000FFFF
-
-	refMask     = 0x00FFFFFFFFFF0000
-	featureMask = 0x7FFFFFFFFFFF0000
-	typeMask    = 0x7F00000000000000
-
-	boundsMask    = 0x0800000000000000
-	nodeMask      = 0x1000000000000000
-	wayMask       = 0x2000000000000000
-	relationMask  = 0x3000000000000000
-	changesetMask = 0x4000000000000000
-	noteMask      = 0x5000000000000000
-	userMask      = 0x6000000000000000
+	// versionMask = 0x000000000000FFFF
+	refMask = 0x00FFFFFFFFFF0000
+	// featureMask = 0x7FFFFFFFFFFF0000
+	typeMask = 0x7F00000000000000
+	// boundsMask    = 0x0800000000000000
+	nodeMask     = 0x1000000000000000
+	wayMask      = 0x2000000000000000
+	relationMask = 0x3000000000000000
+	// changesetMask = 0x4000000000000000
+	// noteMask      = 0x5000000000000000
+	// userMask      = 0x6000000000000000
 )
 
 // A FeatureID is an identifier for a feature in OSM.

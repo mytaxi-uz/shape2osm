@@ -4,13 +4,12 @@ import (
 	"encoding/xml"
 	"fmt"
 	"log"
-	"math"
 	"os"
 	"strings"
 	"time"
 
-	"github.com/mytaxi-uz/shape2osm/utils/osm"
-	"github.com/mytaxi-uz/shape2osm/utils/shp"
+	"github.com/mytaxi-uz/shape2osm/util/osm"
+	"github.com/mytaxi-uz/shape2osm/util/shp"
 )
 
 var (
@@ -30,15 +29,20 @@ func main() {
 
 	nodesIDMap = make(map[[2]float64]int64)
 
-	dirname := "./"
+	shapeFilesPath, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Error get current directory: ", err)
+		return
+	}
+	shapeFilesPath += string(os.PathSeparator)
 
 	fmt.Println("Starting shapefile to osm converter...")
-	fmt.Println("Open shapefiles from directory:", dirname)
+	fmt.Println("Open shapefiles from directory:", shapeFilesPath)
 
 	startTime := time.Now().UTC().Round(time.Second)
 	nowTime = startTime.Format("2006-01-02T15:04:05Z")
 
-	f, err := os.Open(dirname)
+	f, err := os.Open(shapeFilesPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -56,9 +60,18 @@ func main() {
 		if !strings.HasSuffix(name, ".shp") {
 			continue
 		}
+		shapeType := strings.TrimSuffix(name, ".shp")
+
+		switch shapeType {
+		case "poi", "place", "building", "road", "landuse", "water", "river", "railway":
+			break
+		default:
+			continue
+		}
+
 		fileCount++
 		fmt.Println("Converting shapefile:", name)
-		shapeReader, err := shp.Open(dirname + name)
+		shapeReader, err := shp.Open(shapeFilesPath + name)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -66,27 +79,27 @@ func main() {
 
 		switch shapeReader.GeometryType {
 		case shp.POINT:
-			convertPointToOSMNode(shapeReader)
+			convertPointToOSMNode(shapeReader, shapeType)
 		case shp.POLYLINE:
-			convertPolylineToOSMWay(shapeReader)
+			convertPolylineToOSMWay(shapeReader, shapeType)
 		case shp.POLYGON:
-			convertPolygonToOSMWay(shapeReader)
+			convertPolygonToOSMWay(shapeReader, shapeType)
 		}
 	}
 
 	if fileCount == 0 {
-		fmt.Println("No shapefiles found from directory:", dirname)
+		fmt.Println("No shapefiles found from directory:", shapeFilesPath)
 		return
 	}
 
 	if len(osmOut.Nodes) == 0 {
-		fmt.Println("Empty shapefiles reads from directory:", dirname)
+		fmt.Println("Empty shapefiles reads from directory:", shapeFilesPath)
 		return
 	}
 
 	fmt.Println("Encode and write to file...")
 
-	f, err = os.Create(dirname + "uzbekistan.osm")
+	f, err = os.Create(shapeFilesPath + "uzbekistan.osm")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -113,10 +126,4 @@ func main() {
 	fmt.Println("Total OSM ways writed:      ", len(osmOut.Ways))
 	fmt.Println("Total OSM relations writed: ", len(osmOut.Relations))
 	fmt.Println("Estimated time: ", time.Since(startTime))
-}
-
-// truncate float64 value with precision 7 (~1cm)
-func truncateFloat64(num float64) float64 {
-	const precesion = 10000000
-	return float64(int(num*precesion+math.Copysign(0.5, num))) / precesion
 }

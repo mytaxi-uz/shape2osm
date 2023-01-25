@@ -4,11 +4,14 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/mytaxi-uz/shape2osm/utils/osm"
-	"github.com/mytaxi-uz/shape2osm/utils/shp"
+	"github.com/mytaxi-uz/shape2osm/util"
+	"github.com/mytaxi-uz/shape2osm/util/osm"
+	"github.com/mytaxi-uz/shape2osm/util/shp"
 )
 
-func convertPointToOSMNode(shapeReader *shp.Reader) {
+// poi, place
+
+func convertPointToOSMNode(shapeReader *shp.Reader, shapeType string) {
 	// fields from the attribute table (DBF)
 	fields := shapeReader.Fields()
 
@@ -22,11 +25,17 @@ func convertPointToOSMNode(shapeReader *shp.Reader) {
 		}
 		point := p.(*shp.Point)
 		osmID++
+		var tags osm.Tags
+
+		switch shapeType {
+		case "poi":
+			tags = convertPoiAttrToOSMTag(num, fields, shapeReader)
+		}
 		node := osm.Node{
 			ID:        osmID,
-			Lat:       truncateFloat64(point.Y),
-			Lon:       truncateFloat64(point.X),
-			Tags:      convertPointAttrToOSMTag(num, fields, shapeReader),
+			Lat:       util.TruncateFloat64(point.Y),
+			Lon:       util.TruncateFloat64(point.X),
+			Tags:      tags,
 			Version:   1,
 			Timestamp: nowTime,
 		}
@@ -46,7 +55,7 @@ func convertPointToOSMNode(shapeReader *shp.Reader) {
 	}
 }
 
-func convertPointAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.Tags) {
+func convertPoiAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.Tags) {
 	var key, value, str_type_uz, str_type_ru, str_type_en string
 
 	for k, f := range fields {
@@ -79,40 +88,19 @@ func convertPointAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (
 		/*
 			case "ID":
 				key = "id"
-				for i, c := range attr {
-					if c == '.' {
-						attr = attr[:i]
-						break
-					}
-				}
 				value = attr
 		*/
 		case "NAME_UZ":
-			key = "name"
+			key = "name:uz"
 			value = attr
-			/*
-				if class != "" {
-					value += ", " + class
-				}
-			*/
 		case "NAME", "NAME_RU":
 			key = "name:ru"
 			value = attr
-			/*
-				if class != "" {
-					value += ", " + class
-				}
-			*/
 		case "NAME_EN":
 			key = "name:en"
 			value = attr
-			/*
-				if class != "" {
-					value += ", " + class
-				}
-			*/
 		case "STREET_UZ":
-			key = "addr:street"
+			key = "addr:street:uz"
 			value = attr
 			if str_type_uz != "" {
 				value += " " + str_type_uz

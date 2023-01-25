@@ -2,7 +2,6 @@ package osm
 
 import (
 	"encoding/json"
-	"errors"
 	"sort"
 	"sync"
 )
@@ -96,31 +95,33 @@ func (ts Tags) keyValues(ss *stringSet) (keys, values []uint32) {
 	return keys, values
 }
 
-func tagsFromStrings(ss []string, keys, values []uint32) (Tags, error) {
-	if len(keys) != len(values) {
-		return nil, errors.New("keys not same length as values")
-	}
-
-	if len(keys) == 0 {
-		return nil, nil
-	}
-
-	l := uint32(len(ss))
-	result := make([]Tag, 0, len(keys))
-	for i := range keys {
-		if keys[i] >= l {
-			return nil, errors.New("key index out of range")
+/*
+	func tagsFromStrings(ss []string, keys, values []uint32) (Tags, error) {
+		if len(keys) != len(values) {
+			return nil, errors.New("keys not same length as values")
 		}
 
-		if values[i] >= l {
-			return nil, errors.New("values index out of range")
+		if len(keys) == 0 {
+			return nil, nil
 		}
 
-		result = append(result, Tag{Key: ss[keys[i]], Value: ss[values[i]]})
-	}
+		l := uint32(len(ss))
+		result := make([]Tag, 0, len(keys))
+		for i := range keys {
+			if keys[i] >= l {
+				return nil, errors.New("key index out of range")
+			}
 
-	return result, nil
-}
+			if values[i] >= l {
+				return nil, errors.New("values index out of range")
+			}
+
+			result = append(result, Tag{Key: ss[keys[i]], Value: ss[values[i]]})
+		}
+
+		return result, nil
+	}
+*/
 
 type stringSet struct {
 	lk     sync.Mutex
