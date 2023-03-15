@@ -158,7 +158,7 @@ func convertBuildingAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader
 		switch field {
 		case "STOREY":
 			key = "building:levels"
-			value = attr
+			value = strings.Split(attr, ".")[0]
 		case "HOUSE_NUM":
 			key = "addr:housenumber"
 			value = attr
