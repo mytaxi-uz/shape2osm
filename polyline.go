@@ -137,8 +137,11 @@ func convertRoadAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (t
 				value = "yes"
 			}
 		case "TUNNEL":
-			if attr == "1" {
+			if attr == "2" {
 				key = "tunnel"
+				value = "yes"
+			} else if attr == "1" {
+				key = "bridge"
 				value = "yes"
 			}
 		case "TYP_COD":
