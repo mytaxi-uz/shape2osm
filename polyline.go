@@ -140,9 +140,19 @@ func convertRoadAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (t
 			if attr == "2" {
 				key = "tunnel"
 				value = "yes"
+				tag := osm.Tag{
+					Key:   "layer",
+					Value: "-1",
+				}
+				tags = append(tags, tag)
 			} else if attr == "1" {
 				key = "bridge"
 				value = "yes"
+				tag := osm.Tag{
+					Key:   "layer",
+					Value: "1",
+				}
+				tags = append(tags, tag)
 			}
 		case "TYP_COD":
 			key = "highway"

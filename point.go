@@ -178,11 +178,16 @@ func convertPointPlaceAttrToOSMTag(num int, fields []shp.Field, reader *shp.Read
 			key = "place"
 			switch attr {
 			case "20":
-				value = "town"
+				tag := osm.Tag{
+					Key:   "admin_level",
+					Value: "6",
+				}
+				tags = append(tags, tag)
+				value = "city"
 			case "10":
-				value = "village"
+				value = "town"
 			case "11":
-				value = "hamlet"
+				value = "village"
 			case "134", "130", "723":
 				value = "neighbourhood"
 			case "12":
