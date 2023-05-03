@@ -92,7 +92,7 @@ func convertPolygonToOSMWay(shapeReader *shp.Reader, shapeType string) {
 			tags = convertLanduseAttrToOSMTag(num, fields, shapeReader)
 		case "water":
 			tags = convertWaterAttrToOSMTag(num, fields, shapeReader)
-		case "place-a":
+		case "place_a":
 			tags = convertPolygonPlaceAttrToOSMTag(num, fields, shapeReader)
 		}
 
@@ -277,28 +277,6 @@ func convertWaterAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (
 }
 
 func convertPolygonPlaceAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.Tags) {
-
-	tag := osm.Tag{
-		Key:   "type",
-		Value: "boundary",
-	}
-
-	tags = append(tags, tag)
-
-	tag = osm.Tag{
-		Key:   "boundary",
-		Value: "administrative",
-	}
-
-	tags = append(tags, tag)
-
-	tag = osm.Tag{
-		Key:   "admin_level",
-		Value: "4",
-	}
-
-	tags = append(tags, tag)
-
 	for k, f := range fields {
 		attr := reader.ReadAttribute(num, k)
 
@@ -311,6 +289,38 @@ func convertPolygonPlaceAttrToOSMTag(num int, fields []shp.Field, reader *shp.Re
 		field := strings.ToUpper(f.String())
 
 		switch field {
+		case "TYP_COD":
+			switch attr {
+			case "13":
+				tag := osm.Tag{
+					Key:   "boundary",
+					Value: "administrative",
+				}
+
+				tags = append(tags, tag)
+
+				tag = osm.Tag{
+					Key:   "admin_level",
+					Value: "2",
+				}
+
+				tags = append(tags, tag)
+			case "9":
+				tag := osm.Tag{
+					Key:   "boundary",
+					Value: "administrative",
+				}
+
+				tags = append(tags, tag)
+
+				tag = osm.Tag{
+					Key:   "admin_level",
+					Value: "4",
+				}
+
+				tags = append(tags, tag)
+			}
+
 		case "NAME_UZ":
 			key = "name:uz"
 			value = attr
