@@ -63,7 +63,7 @@ func main() {
 		shapeType := strings.TrimSuffix(name, ".shp")
 
 		switch shapeType {
-		case "poi", "place", "place-a", "building", "road", "landuse", "water", "river", "railway":
+		case "poi", "place", "place_a", "building", "road", "landuse", "water", "river", "railway":
 			break
 		default:
 			continue
