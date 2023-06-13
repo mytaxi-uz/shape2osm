@@ -113,9 +113,9 @@ func convertPoiAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (ta
 		case "ADDRESS_UZ":
 			key = "addr:housenumber"
 			value = attr
-		case "CLASS":
-			key = "amenity"
-			value = strings.ToLower(attr)
+		// case "CLASS":
+		// key = "amenity"
+		// value = strings.ToLower(attr)
 		case "ADDRESS":
 			key = "addr:full"
 			value = attr
@@ -134,6 +134,125 @@ func convertPoiAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (ta
 		case "ZIPCODE":
 			key = "addr:postcode"
 			value = attr
+
+		case "TYP_COD":
+			switch attr {
+			case "371":
+				key = "aeroway"
+				value = "aerodrome"
+			case "727", "245", "248":
+				key = "shop"
+				value = "convenience"
+			case "728":
+				key = "shop"
+				value = "clothes"
+			case "734":
+				key = "shop"
+				value = "furniture"
+			case "729":
+				key = "shop"
+				value = "hardware"
+			case "171":
+				key = "amenity"
+				value = "bank"
+			case "630":
+				key = "amenity"
+				value = "bar"
+			case "613":
+				key = "amenity"
+				value = "hairdresser"
+			case "243":
+				key = "amenity"
+				value = "cafe"
+			case "609":
+				key = "shop"
+				value = "car"
+			case "366":
+				key = "shop"
+				value = "car_repair"
+			case "301":
+				key = "amenity"
+				value = "place_of_worship"
+				tag := osm.Tag{
+					Key:   "religion",
+					Value: "muslim",
+				}
+				tags = append(tags, tag)
+			case "303", "304", "622":
+				key = "amenity"
+				value = "place_of_worship"
+				tag := osm.Tag{
+					Key:   "religion",
+					Value: "christian",
+				}
+				tags = append(tags, tag)
+			case "327":
+				key = "amenity"
+				value = "cinema"
+			case "213":
+				key = "amenity"
+				value = "college"
+			case "615":
+				key = "amenity"
+				value = "dentist"
+			case "362", "610":
+				key = "amenity"
+				value = "fuel"
+			case "616", "624", "621":
+				key = "office"
+				value = "government"
+			case "340", "350", "349":
+				key = "amenity"
+				value = "hospital"
+			case "204":
+				key = "amenity"
+				value = "kindergarten"
+			case "150":
+				key = "tourism"
+				value = "hotel"
+			case "601", "250":
+				key = "shop"
+				value = "mall"
+			case "333":
+				key = "historic"
+				value = "monument"
+			case "329":
+				key = "tourism"
+				value = "museum"
+			case "619", "709":
+				key = "office"
+				value = "company"
+			case "103":
+				key = "leisure"
+				value = "park"
+			case "240":
+				key = "amenity"
+				value = "pharmacy"
+			case "247":
+				key = "amenity"
+				value = "restaurant"
+			case "217", "218":
+				key = "amenity"
+				value = "school"
+			case "733":
+				key = "shop"
+				value = "alcohol"
+			case "731":
+				key = "shop"
+				value = "baby_goods"
+			case "201":
+				key = "amenity"
+				value = "university"
+			case "420", "440":
+				key = "railway"
+				value = "subway_entrance"
+			case "325":
+				key = "tourism"
+				value = "zoo"
+			case "271":
+				key = "amenity"
+				value = "swimming_pool"
+			}
 		}
 
 		if key != "" {
