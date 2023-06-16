@@ -252,6 +252,9 @@ func convertPoiAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (ta
 			case "271":
 				key = "amenity"
 				value = "swimming_pool"
+			case "736":
+				key = "shop"
+				value = "computer"
 			}
 		}
 
