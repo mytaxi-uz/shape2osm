@@ -157,25 +157,46 @@ func convertRoadAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (t
 		case "TYP_COD":
 			key = "highway"
 			switch attr {
-			case "34", "30":
+			case "34":
 				value = "trunk"
-			case "31", "56", "453", "42":
+			case "31":
 				value = "trunk_link"
-			case "49", "54":
+			case "49":
 				value = "primary"
-			case "55", "53":
+			case "53":
 				value = "secondary"
-			case "37", "51":
+			case "453", "51", "55":
 				value = "tertiary"
-			case "46", "45", "52", "50":
-				value = "residential"
-			case "32", "33":
-				value = "pedestrian"
-			case "35", "38", "36":
+			// case "46", "45", "52", "50":
+			// value = "residential"
+			// case "33":
+			// value = "pedestrian"
+			case "468", "36":
 				value = "track"
-			case "39", "59", "146":
+			case "146", "32":
 				value = "footway"
-			case "43", "40":
+			case "59": // crossing
+				value = "footway"
+				tag := osm.Tag{
+					Key:   "footway",
+					Value: "crossing",
+				}
+				tags = append(tags, tag)
+			case "431": // footway tonnel
+				value = "footway"
+				tag := osm.Tag{
+					Key:   "layer",
+					Value: "-1",
+				}
+				tags = append(tags, tag)
+				tag = osm.Tag{
+					Key:   "tunnel",
+					Value: "yes",
+				}
+				tags = append(tags, tag)
+			case "145", "405": // steps
+				value = "steps"
+			case "45", "46", "50", "52", "41", "40":
 				value = "service"
 			default:
 				value = "road"

@@ -198,6 +198,12 @@ func convertLanduseAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader)
 			case "92":
 				key = "landuse"
 				value = "grass"
+			case "340", "349", "350":
+				key = "amenity"
+				value = "hospital"
+			case "207", "213", "216", "201":
+				key = "landuse"
+				value = "university"
 			default:
 				key = ""
 			}
