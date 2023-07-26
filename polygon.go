@@ -2,14 +2,14 @@ package main
 
 import (
 	"reflect"
-	"strings"
 
+	"github.com/mytaxi-uz/shape2osm/tags"
 	"github.com/mytaxi-uz/shape2osm/util"
 	"github.com/mytaxi-uz/shape2osm/util/osm"
 	"github.com/mytaxi-uz/shape2osm/util/shp"
 )
 
-// house, forest, water
+// building, landuse, water
 
 func convertPolygonToOSMWay(shapeReader *shp.Reader, shapeType string) {
 	// fields from the attribute table (DBF)
@@ -83,23 +83,21 @@ func convertPolygonToOSMWay(shapeReader *shp.Reader, shapeType string) {
 			ways = append(ways, &way)
 		}
 
-		var tags osm.Tags
+		var osmTags osm.Tags
 
 		switch shapeType {
 		case "building":
-			tags = convertBuildingAttrToOSMTag(num, fields, shapeReader)
+			osmTags = tags.BuildingAttrToOSMTag(num, fields, shapeReader)
 		case "landuse":
-			tags = convertLanduseAttrToOSMTag(num, fields, shapeReader)
+			osmTags = tags.LanduseAttrToOSMTag(num, fields, shapeReader)
 		case "water":
-			tags = convertWaterAttrToOSMTag(num, fields, shapeReader)
-		case "place_a":
-			tags = convertPolygonPlaceAttrToOSMTag(num, fields, shapeReader)
+			osmTags = tags.WaterAttrToOSMTag(num, fields, shapeReader)
 		}
 
 		osmOut.Ways = append(osmOut.Ways, ways...)
 
 		if len(polygon.Parts) == 1 {
-			ways[0].Tags = tags
+			ways[0].Tags = osmTags
 		} else {
 			osmID++
 			var members []osm.Member
@@ -120,11 +118,11 @@ func convertPolygonToOSMWay(shapeReader *shp.Reader, shapeType string) {
 				Value: "multipolygon",
 			}
 
-			tags = append(tags, tag)
+			osmTags = append(osmTags, tag)
 
 			relation := osm.Relation{
 				ID:        osmID,
-				Tags:      tags,
+				Tags:      osmTags,
 				Members:   members,
 				Version:   1,
 				Timestamp: nowTime,
@@ -133,219 +131,4 @@ func convertPolygonToOSMWay(shapeReader *shp.Reader, shapeType string) {
 			osmOut.Relations = append(osmOut.Relations, &relation)
 		}
 	}
-}
-
-func convertBuildingAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.Tags) {
-
-	tag := osm.Tag{
-		Key:   "building",
-		Value: "yes",
-	}
-
-	tags = append(tags, tag)
-
-	for k, f := range fields {
-		attr := reader.ReadAttribute(num, k)
-
-		if attr == "" {
-			continue
-		}
-
-		key := ""
-		value := ""
-		field := strings.ToUpper(f.String())
-
-		switch field {
-		case "STOREY":
-			key = "building:levels"
-			value = strings.Split(attr, ".")[0]
-		case "HOUSE_NUM":
-			key = "addr:housenumber"
-			value = attr
-		}
-
-		if key != "" {
-			tag := osm.Tag{
-				Key:   key,
-				Value: value,
-			}
-			tags = append(tags, tag)
-		}
-	}
-
-	return
-}
-
-func convertLanduseAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.Tags) {
-
-	for k, f := range fields {
-		attr := reader.ReadAttribute(num, k)
-
-		if attr == "" {
-			continue
-		}
-
-		key := ""
-		value := ""
-		field := strings.ToUpper(f.String())
-
-		switch field {
-		case "TYP_COD":
-			switch attr {
-			case "103", "111":
-				key = "leisure"
-				value = "park"
-			case "92":
-				key = "landuse"
-				value = "grass"
-			case "340", "349", "350":
-				key = "amenity"
-				value = "hospital"
-			case "207", "213", "216", "201":
-				key = "landuse"
-				value = "university"
-			default:
-				key = ""
-			}
-		case "NAME_UZ":
-			key = "name:uz"
-			value = attr
-		case "NAME", "NAME_RU":
-			key = "name:ru"
-			value = attr
-		case "NAME_EN":
-			key = "name:en"
-			value = attr
-		}
-
-		if key != "" {
-			tag := osm.Tag{
-				Key:   key,
-				Value: value,
-			}
-			tags = append(tags, tag)
-		}
-	}
-
-	return
-}
-
-func convertWaterAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.Tags) {
-	var key, value string
-
-	for k, f := range fields {
-		attr := reader.ReadAttribute(num, k)
-
-		if attr == "" {
-			continue
-		}
-
-		key = ""
-		field := strings.ToUpper(f.String())
-
-		switch field {
-		case "TYP_COD":
-			key = "water"
-			switch attr {
-			case "65":
-				value = "canal"
-			case "74":
-				value = "river"
-			case "75":
-				value = "stream"
-			case "271":
-				key = "leisure"
-				value = "swimming_pool"
-			default:
-				key = ""
-			}
-		case "NAME_UZ":
-			key = "name:uz"
-			value = attr
-		case "NAME", "NAME_RU":
-			key = "name:ru"
-			value = attr
-		case "NAME_EN":
-			key = "name:en"
-			value = attr
-		}
-
-		if key != "" {
-			tag := osm.Tag{
-				Key:   key,
-				Value: value,
-			}
-			tags = append(tags, tag)
-		}
-	}
-
-	return
-}
-
-func convertPolygonPlaceAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.Tags) {
-	for k, f := range fields {
-		attr := reader.ReadAttribute(num, k)
-
-		if attr == "" {
-			continue
-		}
-
-		key := ""
-		value := ""
-		field := strings.ToUpper(f.String())
-
-		switch field {
-		case "TYP_COD":
-			switch attr {
-			case "13":
-				tag := osm.Tag{
-					Key:   "boundary",
-					Value: "administrative",
-				}
-
-				tags = append(tags, tag)
-
-				tag = osm.Tag{
-					Key:   "admin_level",
-					Value: "2",
-				}
-
-				tags = append(tags, tag)
-			case "9":
-				tag := osm.Tag{
-					Key:   "boundary",
-					Value: "administrative",
-				}
-
-				tags = append(tags, tag)
-
-				tag = osm.Tag{
-					Key:   "admin_level",
-					Value: "4",
-				}
-
-				tags = append(tags, tag)
-			}
-
-		case "NAME_UZ":
-			key = "name:uz"
-			value = attr
-		case "NAME", "NAME_RU":
-			key = "name:ru"
-			value = attr
-		case "NAME_EN":
-			key = "name:en"
-			value = attr
-		}
-
-		if key != "" {
-			tag := osm.Tag{
-				Key:   key,
-				Value: value,
-			}
-			tags = append(tags, tag)
-		}
-	}
-
-	return
 }
