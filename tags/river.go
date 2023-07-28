@@ -44,11 +44,10 @@ func RiverAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags os
 		}
 
 		if key != "" {
-			tag := osm.Tag{
+			tags = append(tags, osm.Tag{
 				Key:   key,
 				Value: value,
-			}
-			tags = append(tags, tag)
+			})
 		}
 	}
 

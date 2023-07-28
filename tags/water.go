@@ -26,18 +26,23 @@ func WaterAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags os
 			switch attr {
 			case "62":
 				value = "reservoir"
-				tag := osm.Tag{
+				tags = append(tags, osm.Tag{
 					Key:   "natural",
 					Value: "water",
-				}
-				tags = append(tags, tag)
-			case "65", "64":
-				value = "canal"
-			case "61", "68", "74":
+				})
+			case "61", "68":
 				value = "river"
-			case "75":
-				value = "stream"
-			case "271", "72", "73":
+				tags = append(tags, osm.Tag{
+					Key:   "natural",
+					Value: "water",
+				})
+			case "64", "74", "75":
+				value = "canal"
+				tags = append(tags, osm.Tag{
+					Key:   "natural",
+					Value: "water",
+				})
+			case "65", "271", "72", "73":
 				key = "leisure"
 				value = "swimming_pool"
 			default:
@@ -55,11 +60,10 @@ func WaterAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags os
 		}
 
 		if key != "" {
-			tag := osm.Tag{
+			tags = append(tags, osm.Tag{
 				Key:   key,
 				Value: value,
-			}
-			tags = append(tags, tag)
+			})
 		}
 	}
 

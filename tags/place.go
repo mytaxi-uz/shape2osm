@@ -37,11 +37,10 @@ func PlaceAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags os
 			key = "place"
 			switch attr {
 			case "20":
-				tag := osm.Tag{
+				tags = append(tags, osm.Tag{
 					Key:   "admin_level",
 					Value: "6",
-				}
-				tags = append(tags, tag)
+				})
 				value = "city"
 			case "10":
 				value = "town"
@@ -112,11 +111,10 @@ func PlaceAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags os
 		}
 
 		if key != "" {
-			tag := osm.Tag{
+			tags = append(tags, osm.Tag{
 				Key:   key,
 				Value: value,
-			}
-			tags = append(tags, tag)
+			})
 		}
 	}
 

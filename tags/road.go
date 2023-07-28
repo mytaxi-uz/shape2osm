@@ -18,11 +18,10 @@ func RoadAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm
 	}
 
 	if !typCod {
-		tag := osm.Tag{
+		tags = append(tags, osm.Tag{
 			Key:   "highway",
 			Value: "road",
-		}
-		tags = append(tags, tag)
+		})
 		return
 	}
 
@@ -64,19 +63,17 @@ func RoadAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm
 			if attr == "2" {
 				key = "tunnel"
 				value = "yes"
-				tag := osm.Tag{
+				tags = append(tags, osm.Tag{
 					Key:   "layer",
 					Value: "-1",
-				}
-				tags = append(tags, tag)
+				})
 			} else if attr == "1" {
 				key = "bridge"
 				value = "yes"
-				tag := osm.Tag{
+				tags = append(tags, osm.Tag{
 					Key:   "layer",
 					Value: "1",
-				}
-				tags = append(tags, tag)
+				})
 			}
 		case "TYP_COD":
 			key = "highway"
@@ -103,23 +100,20 @@ func RoadAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm
 				value = "footway"
 			case "59": // crossing
 				value = "footway"
-				tag := osm.Tag{
+				tags = append(tags, osm.Tag{
 					Key:   "footway",
 					Value: "crossing",
-				}
-				tags = append(tags, tag)
+				})
 			case "431": // footway tonnel
 				value = "footway"
-				tag := osm.Tag{
+				tags = append(tags, osm.Tag{
 					Key:   "layer",
 					Value: "-1",
-				}
-				tags = append(tags, tag)
-				tag = osm.Tag{
+				})
+				tags = append(tags, osm.Tag{
 					Key:   "tunnel",
 					Value: "yes",
-				}
-				tags = append(tags, tag)
+				})
 			case "145", "405": // steps
 				value = "steps"
 			default:
@@ -150,11 +144,10 @@ func RoadAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm
 		}
 
 		if key != "" {
-			tag := osm.Tag{
+			tags = append(tags, osm.Tag{
 				Key:   key,
 				Value: value,
-			}
-			tags = append(tags, tag)
+			})
 		}
 	}
 

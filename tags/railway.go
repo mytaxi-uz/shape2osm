@@ -42,11 +42,10 @@ func RailwayAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags 
 		}
 
 		if key != "" {
-			tag := osm.Tag{
+			tags = append(tags, osm.Tag{
 				Key:   key,
 				Value: value,
-			}
-			tags = append(tags, tag)
+			})
 		}
 	}
 
