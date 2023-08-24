@@ -87,9 +87,13 @@ func PoiAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.
 
 		case "TYP_COD":
 			switch attr {
-			case "371":
+			case "371", "724":
 				key = "aeroway"
 				value = "aerodrome"
+				tags = append(tags, osm.Tag{
+					Key:   "iata",
+					Value: "TAS",
+				})
 			case "727", "245", "248":
 				key = "shop"
 				value = "convenience"
@@ -203,6 +207,13 @@ func PoiAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.
 			case "736":
 				key = "shop"
 				value = "computer"
+			case "344":
+				key = "place"
+				value = "hamlet"
+				tags = append(tags, osm.Tag{
+					Key:   "leisure",
+					Value: "resort",
+				})
 			}
 		}
 
