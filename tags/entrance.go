@@ -24,10 +24,12 @@ func EntranceAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags
 
 		switch field {
 		case "ENTRANCE":
-			tags = append(tags, osm.Tag{
-				Key:   "name",
-				Value: attr,
-			})
+			if attr != "0" && attr != "" {
+				tags = append(tags, osm.Tag{
+					Key:   "name",
+					Value: attr,
+				})
+			}
 		}
 	}
 
