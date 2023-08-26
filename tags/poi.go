@@ -124,14 +124,14 @@ func PoiAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.
 			case "366":
 				key = "shop"
 				value = "car_repair"
-			case "301":
+			case "301", "622":
 				key = "amenity"
 				value = "place_of_worship"
 				tags = append(tags, osm.Tag{
 					Key:   "religion",
 					Value: "muslim",
 				})
-			case "303", "304", "622":
+			case "303", "304":
 				key = "amenity"
 				value = "place_of_worship"
 				tags = append(tags, osm.Tag{
