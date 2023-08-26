@@ -43,7 +43,7 @@ func LanduseAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags 
 			case "103", "111":
 				key = "leisure"
 				value = "park"
-			case "92":
+			case "92", "110":
 				key = "landuse"
 				value = "grass"
 			case "340", "349", "350":
