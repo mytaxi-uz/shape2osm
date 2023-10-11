@@ -46,7 +46,7 @@ func PlaceAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags os
 				value = "town"
 			case "11":
 				value = "village"
-			case "134", "130":
+			case "142", "134", "130":
 				value = "neighbourhood"
 			case "723":
 				value = "hamlet"
