@@ -214,6 +214,9 @@ func PoiAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm.
 			case "736":
 				key = "shop"
 				value = "computer"
+			case "160":
+				key = "bus"
+				value = "yes"
 			case "344":
 				key = "place"
 				value = "hamlet"
