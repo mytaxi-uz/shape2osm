@@ -88,7 +88,7 @@ func RoadAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm
 				value = "secondary"
 			case "453", "51", "55":
 				value = "tertiary"
-			case "45":
+			case "45", "50":
 				value = "residential"
 			case "40", "46":
 				value = "service"
