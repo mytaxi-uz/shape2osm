@@ -81,7 +81,7 @@ func RoadAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm
 			case "34":
 				value = "trunk"
 			case "31":
-				value = "trunk_link"
+				value = "secondary_link"
 			case "49", "54":
 				value = "primary"
 			case "53":
