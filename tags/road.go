@@ -52,7 +52,7 @@ func RoadAttrToOSMTag(num int, fields []shp.Field, reader *shp.Reader) (tags osm
 			key = "name:en"
 			value = attr
 		case "SPEED":
-			key = "additional:maxspeed"
+			key = "maxspeed"
 			value = attr
 		case "DIRECTION":
 			if attr == "FT" {
